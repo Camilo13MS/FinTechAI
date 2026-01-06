@@ -32,15 +32,17 @@ FinTech AI es una aplicación móvil desarrollada con React Native que busca rev
 
 │   ├── components/   # Componentes reutilizables (Botones, Cards, etc.)
 
-│   ├── screens/      # Pantallas (Login, Home, Chat, Casos, Perfil)
+│   ├── services /    # Servicios de Firebase, Casos, Gemini, Usuarios y Autenticacion.
 
-│   ├── config/       # Configuración de Firebase y API Keys
+│   ├── styles /      # Estilos de las pantallas 
 
-│   ├── hooks/        # Lógica personalizada y llamadas a la base de datos
+│   ├── types /       # Estructura de los casos y usuarios para Cloud Firestore 
+
+│   ├── hooks/        # Lógica personalizada para el uso de la autenticación
 
 │   └── navigation/   # Configuración de React Navigation (Tabs & Stack)
 
-├── App.js            # Punto de entrada de la aplicación
+├── index.tsx            # Punto de entrada de la aplicación
 
 └── app.json          # Configuración de Expo
 
