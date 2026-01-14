@@ -1,0 +1,3 @@
+Credenciales de prueba
+robertorod@gmail.com - password 12345678.
+pepitoperez@gmail.com - password 12345678.

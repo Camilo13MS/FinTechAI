@@ -1,50 +1,67 @@
-# Welcome to your Expo app 👋
+# FinTech AI: Aplicativo IA Para NeoBancos 🚀
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+FinTech AI es una aplicación móvil desarrollada con React Native que busca revolucionar la atención al cliente en el sector financiero. Utiliza Inteligencia Artificial para gestionar consultas, automatizar la creación de tickets de soporte y permitir un escalamiento fluido a asesores humanos.
 
-## Get started
+## 📱 Características Principales
 
-1. Install dependencies
+-Autenticación Segura: Registro e inicio de sesión mediante Firebase Auth.
 
-   ```bash
-   npm install
-   ```
+-Asesor Virtual con IA: Chatbot integrado con modelos de lenguaje (LLM) que entiende lenguaje natural para resolver dudas financieras.
 
-2. Start the app
+-Gestión de Casos Automatizada: La IA detecta cuando un problema requiere soporte técnico y crea automáticamente un ticket en la base de datos.
 
-   ```bash
-   npx expo start
-   ```
+-Monitoreo en Tiempo Real: Seguimiento del estado y prioridad (Alta/Media/Baja) de los casos desde la aplicación.
 
-In the output, you'll find options to open the app in a
+-Perfil Financiero: Visualización de planes de datos, facturas y métricas de consumo del usuario.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 🛠️ Stack Tecnológico
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+-Frontend: React Native + Expo Go
 
-## Get a fresh project
+-Backend as a Service (BaaS): Firebase (Auth & Cloud Firestore)
 
-When you're ready, run:
+-IA Engine: Google Gemini API (o el LLM que hayas integrado)
 
-```bash
-npm run reset-project
-```
+-Estilos: NativeWind / React Native Paper (opcional, según lo que usaras)
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 📂 Estructura del Proyecto
 
-## Learn more
+├── assets/           # Imágenes y recursos estáticos
 
-To learn more about developing your project with Expo, look at the following resources:
+├── src/
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+│   ├── components/   # Componentes reutilizables (Botones, Cards, etc.)
 
-## Join the community
+│   ├── services /    # Servicios de Firebase, Casos, Gemini, Usuarios y Autenticacion.
 
-Join our community of developers creating universal apps.
+│   ├── styles /      # Estilos de las pantallas 
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+│   ├── types /       # Estructura de los casos y usuarios para Cloud Firestore 
+
+│   ├── hooks/        # Lógica personalizada para el uso de la autenticación
+
+│   └── navigation/   # Configuración de React Navigation (Tabs & Stack)
+
+├── index.tsx            # Punto de entrada de la aplicación
+
+└── app.json          # Configuración de Expo
+
+## 🚀 Instalación y Uso
+
+Para ejecutar este proyecto localmente, sigue estos pasos:
+
+1. Clonar el repositorio:
+
+ git clone https://github.com/Camilo13MS/FinTechAI
+
+2. Instalar dependencias:
+
+ npm install
+
+3. Configurar variables de entorno: Crea un archivo de configuración en src/config/ con tus credenciales de Firebase y la API Key de la IA.
+
+4. Iniciar el proyecto:
+
+ npx expo start
+
+5. Simulación: Escanea el código QR con la app de Expo Go en tu dispositivo físico o usa un emulador de Android/iOS.
