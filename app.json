@@ -19,7 +19,10 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.nikx0.portaltelefonia",
+      "googleServicesFile": "./google-services.json"
+
     },
     "web": {
       "output": "static",
@@ -41,8 +44,13 @@
       ]
     ],
     "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "35277999-5169-4116-a104-4eb20798b29c"
+      }
     }
   }
 }

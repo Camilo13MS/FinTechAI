@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "866933992260",
+    "project_id": "portal-telefonia",
+    "storage_bucket": "portal-telefonia.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:866933992260:android:357f89f696b6303c738511",
+        "android_client_info": {
+          "package_name": "com.nikx0.portaltelefonia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQxLp6-Obl8pfj5UEytAzicq8RSXcVmkA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
