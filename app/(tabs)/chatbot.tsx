@@ -30,7 +30,7 @@ type ComplaintAnalysis = {
 
 export default function Chatbot() {
   const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-
+  const uid = auth.currentUser?.uid;
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -171,7 +171,7 @@ Mensaje del usuario:
     priority: string
   ) => {
     await addDoc(collection(db, "cases"), {
-      userId: auth.currentUser?.uid,
+      userId: uid,
       message,
       category,
       priority,
