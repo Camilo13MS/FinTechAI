@@ -1,7 +1,8 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, ScrollView, Text, TextInput, TouchableOpacity } from "react-native";
+import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { register } from "../../src/services/auth.service";
+import WelcomeOverlay from "../../src/components/WelcomeOverlay";
 import styles from "../../src/styles/auth";
 
 export default function Register() {
@@ -12,6 +13,7 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   const handleRegister = async () => {
     if (!name || !phone || !email || !password) {
@@ -27,8 +29,7 @@ export default function Register() {
     setLoading(true);
     try {
       await register(email, password, name, phone);
-      Alert.alert("¡Bienvenido!", "Tu cuenta ha sido creada exitosamente.");
-      router.replace("/(tabs)");
+      setShowWelcome(true); // la navegación ocurre en onFinish del overlay
     } catch (err: any) {
       let msg = err.message;
       if (err.code === 'auth/email-already-in-use') msg = "Ese correo ya está registrado.";
@@ -39,6 +40,7 @@ export default function Register() {
   };
 
   return (
+    <View style={{ flex: 1 }}>
     <ScrollView 
       style={styles.container} 
       contentContainerStyle={styles.scrollContent} // <--- Aquí usamos el nuevo estilo
@@ -103,5 +105,13 @@ export default function Register() {
         </Text>
       </TouchableOpacity>
     </ScrollView>
+
+    {showWelcome && (
+      <WelcomeOverlay
+        message={`¡Cuenta creada, ${name}! 🎉`}
+        onFinish={() => router.replace("/(tabs)")}
+      />
+    )}
+    </View>
   );
 }

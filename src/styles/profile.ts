@@ -83,7 +83,7 @@ const profileStyles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: '#EEF2FF', // Un azul muy clarito
+    backgroundColor: '#CCFBF1', // Un azul muy clarito
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,

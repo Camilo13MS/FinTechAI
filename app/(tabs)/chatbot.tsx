@@ -176,6 +176,7 @@ Mensaje del usuario:
       category,
       priority,
       status: "abierto",
+      handledBy: "bot", // el rol que generó el caso; un admin lo puede reasignar después
       createdAt: serverTimestamp(),
     });
   };

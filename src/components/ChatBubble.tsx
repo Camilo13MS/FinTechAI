@@ -17,6 +17,7 @@ export default function ChatBubble({ text, from }: Props) {
       ]}
     >
       <View style={[styles.bubble, isUser ? styles.user : styles.bot]}>
+        {!isUser && <Text style={styles.roleLabel}>🤖 Agente Bot</Text>}
         <Text style={[styles.text, isUser && styles.userText]}>
           {text}
         </Text>
@@ -42,12 +43,18 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   user: {
-    backgroundColor: "#4F46E5",
+    backgroundColor: "#0D9488",
     borderTopRightRadius: 0,
   },
   bot: {
     backgroundColor: "#E5E7EB",
     borderTopLeftRadius: 0,
+  },
+  roleLabel: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#0D9488",
+    marginBottom: 4,
   },
   text: {
     fontSize: 15,

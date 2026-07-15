@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   cardPrimary: {
-    backgroundColor: "#4F46E5",
+    backgroundColor: "#0D9488",
     padding: 20,
     borderRadius: 16,
     marginBottom: 20,
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   cardText: {
-    color: "#E0E7FF",
+    color: "#CCFBF1",
     marginTop: 5,
   },
   cardTitleDark: {

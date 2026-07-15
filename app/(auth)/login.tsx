@@ -2,11 +2,13 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { login } from "../../src/services/auth.service";
+import WelcomeOverlay from "../../src/components/WelcomeOverlay";
 import styles from "../../src/styles/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showWelcome, setShowWelcome] = useState(false);
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -17,7 +19,7 @@ export default function Login() {
 
     try {
       await login(email, password);
-      router.replace("/(tabs)");
+      setShowWelcome(true); // dispara la transición; la navegación ocurre en onFinish
     } catch (err: any) {
       Alert.alert("Error", err.message);
     }
@@ -57,6 +59,13 @@ export default function Login() {
       <Text style={styles.link} onPress={() => router.push("/(auth)/register")}>
         ¿No tienes cuenta? Regístrate
       </Text>
+
+      {showWelcome && (
+        <WelcomeOverlay
+          message="¡Bienvenido de nuevo! 👋"
+          onFinish={() => router.replace("/(tabs)")}
+        />
+      )}
     </View>
   );
 }

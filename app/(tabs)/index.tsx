@@ -31,7 +31,7 @@ export default function Home() {
         style={styles.card}
         onPress={() => router.push("/(tabs)/cases")}
       >
-        <Ionicons name="folder" size={28} color="#4F46E5" />
+        <Ionicons name="folder" size={28} color="#0D9488" />
         <Text style={styles.cardTitleDark}>Mis casos</Text>
         <Text style={styles.cardTextDark}>
           Consulta el estado de tus solicitudes

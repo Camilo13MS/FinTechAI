@@ -1,4 +1,4 @@
-export type UserRole = "cliente" | "admin";
+export type UserRole = "cliente" | "admin" | "bot";
 
 export interface UserProfile {
   uid: string; // El ID del documento

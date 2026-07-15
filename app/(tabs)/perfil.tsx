@@ -47,7 +47,7 @@ export default function ProfileScreen() {
   const MenuOption = ({ icon, title }: { icon: any, title: string }) => (
     <TouchableOpacity style={styles.menuItem}>
       <View style={styles.menuIconBox}>
-        <Ionicons name={icon} size={22} color="#4F46E5" />
+        <Ionicons name={icon} size={22} color="#0D9488" />
       </View>
       <Text style={styles.menuText}>{title}</Text>
       <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
@@ -57,7 +57,7 @@ export default function ProfileScreen() {
   if (loading) {
     return (
       <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color="#4F46E5" />
+        <ActivityIndicator size="large" color="#0D9488" />
       </View>
     );
   }

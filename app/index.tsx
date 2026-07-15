@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import HomeStyles from "../src/styles/home";
 
 export default function Home() {
@@ -7,6 +7,11 @@ export default function Home() {
 
   return (
     <View style={HomeStyles.container}>
+      <Image
+        source={require("../assets/images/icon.png")}
+        style={HomeStyles.logo}
+        resizeMode="contain"
+      />
       <Text style={HomeStyles.title}>FinTech Portal</Text>
 
       <Text style={HomeStyles.subtitle}>Ingreso de clientes</Text>

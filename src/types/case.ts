@@ -14,6 +14,8 @@ export type CaseStatus =
   | "en_proceso"
   | "cerrado";
 
+export type HandledBy = "bot" | "admin";
+
 export interface Case {
   id?: string;
   userId: string;
@@ -22,4 +24,5 @@ export interface Case {
   priority: CasePriority;
   status: CaseStatus;
   createdAt: any;
+  handledBy?: HandledBy; // quién generó/atiende el caso (por defecto "bot")
 }

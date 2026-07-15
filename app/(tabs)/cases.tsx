@@ -70,6 +70,10 @@ export default function Cases() {
                 Estado: {item.status}
               </Text>
             </View>
+
+            <Text style={styles.status}>
+              Atendido por: {item.handledBy === "admin" ? "👤 Asesor humano" : "🤖 Agente Bot"}
+            </Text>
           </View>
         ))}
       </ScrollView>
