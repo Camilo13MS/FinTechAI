@@ -7,7 +7,13 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
-import { ScrollView, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import ChatBubble from "../../src/components/ChatBubble";
@@ -318,38 +324,40 @@ Mensaje del usuario:
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        style={styles.messages}
-        ref={scrollRef}
-        onContentSizeChange={() =>
-          scrollRef.current?.scrollToEnd({ animated: true })
-        }
-      >
-        {messages.map((msg) => (
-          <ChatBubble key={msg.id} text={msg.text} from={msg.from} />
-        ))}
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+        <ScrollView
+          style={styles.messages}
+          ref={scrollRef}
+          onContentSizeChange={() =>
+            scrollRef.current?.scrollToEnd({ animated: true })
+          }
+        >
+          {messages.map((msg) => (
+            <ChatBubble key={msg.id} text={msg.text} from={msg.from} />
+          ))}
 
-        {isTyping && (
-          <ChatBubble text="El asesor está escribiendo..." from="bot" />
-        )}
-      </ScrollView>
+          {isTyping && (
+            <ChatBubble text="El asesor está escribiendo..." from="bot" />
+          )}
+        </ScrollView>
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Escribe tu mensaje..."
-          placeholderTextColor="#9CA3AF"
-          value={input}
-          onChangeText={setInput}
-          onSubmitEditing={sendMessage}
-          returnKeyType="send"
-          blurOnSubmit={false}
-        />
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Escribe tu mensaje..."
+            placeholderTextColor="#9CA3AF"
+            value={input}
+            onChangeText={setInput}
+            onSubmitEditing={sendMessage}
+            returnKeyType="send"
+            blurOnSubmit={false}
+          />
 
-        <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
-          <Ionicons name="send" size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
+            <Ionicons name="send" size={20} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
