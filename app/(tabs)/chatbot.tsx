@@ -1,6 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
-import { addDoc, collection, doc, getDoc, serverTimestamp } from "firebase/firestore";
-import { useRef, useState } from "react";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+import { useEffect, useRef, useState } from "react";
 import { ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -34,14 +40,65 @@ export default function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: "Hola 👋 Soy tu asesor virtual. ¿En qué puedo ayudarte?",
+      text: "Hola 👋 Soy tu asesor financiero virtual. Puedo ayudarte con tu plan, facturación y pagos. ¿En qué te ayudo?",
       from: "bot",
     },
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [profile, setProfile] = useState<Record<string, any> | null>(null);
 
   const scrollRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    if (!uid) return;
+    getUserProfile(uid)
+      .then(setProfile)
+      .catch(() => setProfile(null));
+  }, [uid]);
+
+  /* =======================
+     CONTEXTO DEL ASESOR
+  ======================= */
+
+  const buildSystemInstruction = () => {
+    const nombre = profile?.name ?? "el cliente";
+    const plan = profile?.plan ?? "sin plan registrado";
+    const dataUsage =
+      typeof profile?.dataUsage === "number"
+        ? `${Math.round(profile.dataUsage * 100)}%`
+        : "sin datos de consumo";
+
+    return `
+Eres el asesor financiero virtual del portal de telefonía. Ayudas a ${nombre}
+con su cuenta: plan contratado, consumo de datos, facturación y pagos.
+
+CÓMO HABLAS:
+- Como una persona real y cercana, no como un bot corporativo. Nada de listas
+  con viñetas ni asteriscos para respuestas cortas o emocionales — escribe en
+  párrafos cortos, como si le escribieras a alguien por WhatsApp.
+- Si el usuario suena frustrado, ansioso o estresado (mayúsculas, urgencia,
+  quejas, "necesito ya", etc.), arranca reconociendo cómo se siente en una
+  frase breve y genuina antes de resolver algo. No minimices su molestia ni
+  uses frases hechas tipo "entiendo tu frustración" repetidas como fórmula.
+- Tuteo, español neutro, cálido pero profesional. Cero tecnicismos innecesarios.
+
+Datos reales de la cuenta que estás atendiendo:
+- Plan actual: ${plan}
+- Consumo de datos: ${dataUsage}
+
+QUÉ HACER CUANDO NO TIENES UN DATO (ej. saldo exacto, un cobro puntual, historial
+de pagos — cosas que no están en los "Datos reales" de arriba):
+- Sé honesto de inmediato, sin rodeos ni excusas largas.
+- En la MISMA respuesta, ofrece conectarlo con un asesor humano ahora mismo
+  (no lo mandes a "entra a la app" o "llama a soporte" como si fuera su problema
+  resolverlo solo). Algo como: "eso no lo tengo yo a la mano, pero te puedo
+  escalar esto ahora mismo con un asesor para que te lo confirme, ¿quieres?"
+- No inventes cifras ni des un balance/consumo que no esté en los datos reales.
+
+No des consejos financieros generales fuera del contexto de esta cuenta/plan.
+`.trim();
+  };
 
   /* =======================
      GEMINI FUNCTIONS
@@ -58,13 +115,17 @@ export default function Chatbot() {
             "x-goog-api-key": process.env.EXPO_PUBLIC_GEMINI_API_KEY!,
           },
           body: JSON.stringify({
+            systemInstruction: {
+              parts: [{ text: buildSystemInstruction() }],
+            },
             contents: [
               {
+                role: "user",
                 parts: [{ text: message }],
               },
             ],
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -85,7 +146,7 @@ export default function Chatbot() {
   };
 
   const detectComplaint = async (
-    message: string
+    message: string,
   ): Promise<ComplaintAnalysis> => {
     try {
       const response = await fetch(
@@ -103,7 +164,7 @@ export default function Chatbot() {
                 parts: [
                   {
                     text: `
-Eres un CLASIFICADOR AUTOMÁTICO.
+Eres un CLASIFICADOR AUTOMÁTICO para un asesor financiero de telefonía.
 No eres un asistente.
 No ayudas.
 No explicas.
@@ -113,7 +174,12 @@ No saludas.
 Tu respuesta DEBE ser ÚNICAMENTE un JSON válido.
 Si escribes texto adicional, la respuesta es incorrecta.
 
-Analiza el mensaje y responde EXACTAMENTE con este formato:
+Marca isComplaint=true si el usuario reporta un problema, un cobro indebido,
+un pago que no se refleja, un reclamo sobre su factura/plan, o cualquier cosa
+que un humano deba revisar. Si solo está preguntando algo informativo sobre
+su cuenta (cuánto plan tiene, cuánto consumo lleva), isComplaint=false.
+
+Responde EXACTAMENTE con este formato:
 
 {
   "isComplaint": true o false,
@@ -130,7 +196,7 @@ Mensaje del usuario:
               },
             ],
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -168,7 +234,7 @@ Mensaje del usuario:
   const createCase = async (
     message: string,
     category: string,
-    priority: string
+    priority: string,
   ) => {
     await addDoc(collection(db, "cases"), {
       userId: uid,
@@ -182,9 +248,9 @@ Mensaje del usuario:
   };
 
   const getUserProfile = async (uid: string) => {
-  const snap = await getDoc(doc(db, "users", uid));
-  return snap.exists() ? snap.data() : null;
-};
+    const snap = await getDoc(doc(db, "users", uid));
+    return snap.exists() ? snap.data() : null;
+  };
 
   /* =======================
      CHAT LOGIC
@@ -208,20 +274,25 @@ Mensaje del usuario:
     setInput("");
     setIsTyping(true);
 
+    // Mueve el scroll hacia abajo al enviar un mensaje
+    setTimeout(() => {
+      scrollRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+
     const analysis = await detectComplaint(userText);
 
     if (analysis.isComplaint) {
       await createCase(
         userText,
         analysis.category || "otro",
-        analysis.priority || "media"
+        analysis.priority || "media",
       );
 
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now() + 1,
-          text: "📋 Tu caso ha sido registrado.\nUn asesor humano lo revisará pronto.",
+          text: "📋 Esto ya lo escalé a un asesor humano — quedó registrado como caso y te van a contactar pronto para resolverlo directamente.",
           from: "bot",
         },
       ]);
@@ -270,6 +341,9 @@ Mensaje del usuario:
           placeholderTextColor="#9CA3AF"
           value={input}
           onChangeText={setInput}
+          onSubmitEditing={sendMessage}
+          returnKeyType="send"
+          blurOnSubmit={false}
         />
 
         <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
