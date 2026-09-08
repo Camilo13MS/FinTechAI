@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import colors from "../../src/constants/colors";
 import { auth, db } from "../../src/services/firebase";
 import styles from "../../src/styles/cases";
 import { Case } from "../../src/types/case";
@@ -15,7 +16,7 @@ export default function Cases() {
 
     const q = query(
       collection(db, "cases"),
-      where("userId", "==", auth.currentUser.uid)
+      where("userId", "==", auth.currentUser.uid),
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -33,11 +34,11 @@ export default function Cases() {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "alta":
-        return "#EF4444"; // rojo
+        return colors.danger; // rojo
       case "media":
-        return "#F59E0B"; // amarillo
+        return colors.warning; // amarillo
       default:
-        return "#10B981"; // verde
+        return colors.success; // verde
     }
   };
 
@@ -46,9 +47,7 @@ export default function Cases() {
       <Text style={styles.title}>Mis Casos 📋</Text>
 
       <ScrollView>
-        {cases.length === 0 && (
-          <Text>No tienes casos registrados aún 😌</Text>
-        )}
+        {cases.length === 0 && <Text>No tienes casos registrados aún 😌</Text>}
 
         {cases.map((item) => (
           <View key={item.id} style={styles.card}>
@@ -66,13 +65,14 @@ export default function Cases() {
                 </Text>
               </View>
 
-              <Text style={styles.status}>
-                Estado: {item.status}
-              </Text>
+              <Text style={styles.status}>Estado: {item.status}</Text>
             </View>
 
             <Text style={styles.status}>
-              Atendido por: {item.handledBy === "admin" ? "👤 Asesor humano" : "🤖 Agente Bot"}
+              Atendido por:{" "}
+              {item.handledBy === "admin"
+                ? "👤 Asesor humano"
+                : "🤖 Agente Bot"}
             </Text>
           </View>
         ))}

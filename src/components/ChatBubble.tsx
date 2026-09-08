@@ -1,5 +1,5 @@
-
 import { StyleSheet, Text, View } from "react-native";
+import colors from "../constants/colors";
 
 type Props = {
   text: string;
@@ -18,9 +18,7 @@ export default function ChatBubble({ text, from }: Props) {
     >
       <View style={[styles.bubble, isUser ? styles.user : styles.bot]}>
         {!isUser && <Text style={styles.roleLabel}>🤖 Agente Bot</Text>}
-        <Text style={[styles.text, isUser && styles.userText]}>
-          {text}
-        </Text>
+        <Text style={[styles.text, isUser && styles.userText]}>{text}</Text>
       </View>
     </View>
   );
@@ -43,24 +41,24 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   user: {
-    backgroundColor: "#0D9488",
+    backgroundColor: colors.primary,
     borderTopRightRadius: 0,
   },
   bot: {
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 0,
   },
   roleLabel: {
     fontSize: 11,
     fontWeight: "700",
-    color: "#0D9488",
+    color: colors.primary,
     marginBottom: 4,
   },
   text: {
     fontSize: 15,
-    color: "#1F2937",
+    color: colors.textPrimary,
   },
   userText: {
-    color: "#FFFFFF",
+    color: colors.surface,
   },
 });

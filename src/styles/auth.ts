@@ -1,12 +1,11 @@
 import { StyleSheet } from "react-native";
+import colors from "../constants/colors";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
-    // Eliminamos justifyContent y padding de aquí porque causan conflicto en ScrollView
+    backgroundColor: colors.background,
   },
-  // Creamos este nuevo estilo específico para el interior del ScrollView
   scrollContent: {
     justifyContent: "center",
     padding: 20,
@@ -17,24 +16,24 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 30,
     textAlign: "center",
-    color: "#1F2937",
+    color: colors.textPrimary,
   },
   input: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     padding: 15,
     borderRadius: 10,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
   },
   button: {
-    backgroundColor: "#0D9488",
+    backgroundColor: colors.primary,
     padding: 15,
     borderRadius: 10,
     marginTop: 10,
   },
   buttonText: {
-    color: "#FFFFFF",
+    color: colors.surface,
     textAlign: "center",
     fontWeight: "bold",
     fontSize: 16,
@@ -42,7 +41,7 @@ const styles = StyleSheet.create({
   link: {
     marginTop: 20,
     textAlign: "center",
-    color: "#0D9488",
+    color: colors.primary,
     fontWeight: "600",
   },
 });

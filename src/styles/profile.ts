@@ -1,25 +1,26 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
+import colors from "../constants/colors";
 
 const profileStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFB', // Un gris muy suave de fondo
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     paddingTop: 60,
     paddingBottom: 30,
-    alignItems: 'center',
+    alignItems: "center",
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 5,
   },
   avatarContainer: {
-    position: 'relative',
+    position: "relative",
     marginBottom: 15,
   },
   avatar: {
@@ -27,33 +28,33 @@ const profileStyles = StyleSheet.create({
     height: 110,
     borderRadius: 55,
     borderWidth: 4,
-    borderColor: '#F3F4F6',
+    borderColor: colors.border,
   },
   statusBadge: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     right: 0,
-    backgroundColor: '#10B981', // Verde "Online"
+    backgroundColor: colors.success, // Verde "Online"
     width: 24,
     height: 24,
     borderRadius: 12,
     borderWidth: 3,
-    borderColor: '#FFFFFF',
+    borderColor: colors.surface,
   },
   userName: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1F2937',
+    fontWeight: "bold",
+    color: colors.textPrimary,
   },
   userPlan: {
     fontSize: 16,
-    color: '#6B7280',
+    color: colors.textSecondary,
     marginTop: 4,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.surface,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 20,
-    overflow: 'hidden', // Necesario para el borderRadius en Text en Android a veces
+    overflow: "hidden", // Necesario para el borderRadius en Text en Android a veces
   },
   section: {
     marginTop: 25,
@@ -61,15 +62,15 @@ const profileStyles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '700',
-    color: '#374151',
+    fontWeight: "700",
+    color: colors.textPrimary,
     marginBottom: 15,
     marginLeft: 10,
   },
   menuItem: {
-    backgroundColor: '#FFFFFF',
-    flexDirection: 'row',
-    alignItems: 'center',
+    backgroundColor: colors.surface,
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
     borderRadius: 16,
     marginBottom: 12,
@@ -83,30 +84,30 @@ const profileStyles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: '#CCFBF1', // Un azul muy clarito
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: colors.primaryLight, // Un azul muy clarito
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 15,
   },
   menuText: {
     flex: 1,
     fontSize: 16,
-    fontWeight: '500',
-    color: '#374151',
+    fontWeight: "500",
+    color: colors.textPrimary,
   },
   logoutButton: {
     marginTop: 30,
     marginHorizontal: 20,
-    backgroundColor: '#FEE2E2',
+    backgroundColor: colors.dangerLight,
     paddingVertical: 16,
     borderRadius: 16,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   logoutText: {
-    color: '#EF4444',
-    fontWeight: 'bold',
+    color: colors.danger,
+    fontWeight: "bold",
     fontSize: 16,
     marginLeft: 8,
   },

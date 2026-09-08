@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
+import colors from "../constants/colors";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.inputBackground,
     paddingTop: 10,
   },
   messages: {
@@ -14,18 +15,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 10,
     borderTopWidth: 1,
-    borderColor: "#E5E7EB",
-    backgroundColor: "#FFFFFF",
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
   },
   input: {
     flex: 1,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.background,
     padding: 12,
     borderRadius: 20,
     marginRight: 10,
   },
   sendButton: {
-    backgroundColor: "#0D9488",
+    backgroundColor: colors.primary,
     width: 44,
     height: 44,
     borderRadius: 22,

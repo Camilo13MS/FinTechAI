@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
+import colors from "../constants/colors";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0D9488",
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
@@ -16,37 +17,37 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    color: "#fff",
+    color: colors.surface,
     fontWeight: "bold",
     marginBottom: 20,
   },
   subtitle: {
     fontSize: 18,
-    color: "#ddd",
+    color: colors.textSecondary,
     marginBottom: 20,
   },
   button: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.surface,
     width: "100%",
     padding: 15,
     borderRadius: 10,
     marginBottom: 15,
   },
   buttonText: {
-    color: "#0D9488",
+    color: colors.primary,
     textAlign: "center",
     fontSize: 16,
     fontWeight: "bold",
   },
   outlineButton: {
     borderWidth: 2,
-    borderColor: "#fff",
+    borderColor: colors.surface,
     width: "100%",
     padding: 15,
     borderRadius: 10,
   },
   outlineText: {
-    color: "#fff",
+    color: colors.surface,
     textAlign: "center",
     fontSize: 16,
     fontWeight: "bold",

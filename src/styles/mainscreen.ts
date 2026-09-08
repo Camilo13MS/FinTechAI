@@ -1,54 +1,55 @@
 import { StyleSheet } from "react-native";
+import colors from "../constants/colors";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.background,
     padding: 20,
     paddingTop: 40,
   },
   welcome: {
     fontSize: 26,
     fontWeight: "bold",
-    color: "#1F2937",
+    color: colors.textPrimary,
     marginTop: 20,
   },
   subtitle: {
     fontSize: 16,
-    color: "#6B7280",
+    color: colors.textSecondary,
     marginBottom: 30,
   },
   cardPrimary: {
-    backgroundColor: "#0D9488",
+    backgroundColor: colors.primary,
     padding: 20,
     borderRadius: 16,
     marginBottom: 20,
   },
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     padding: 20,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
   },
   cardTitle: {
-    color: "#FFFFFF",
+    color: colors.surface,
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 10,
   },
   cardText: {
-    color: "#CCFBF1",
+    color: colors.primaryLight,
     marginTop: 5,
   },
   cardTitleDark: {
-    color: "#1F2937",
+    color: colors.textPrimary,
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 10,
   },
   cardTextDark: {
-    color: "#6B7280",
+    color: colors.textSecondary,
     marginTop: 5,
   },
 });

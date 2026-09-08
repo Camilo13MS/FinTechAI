@@ -15,7 +15,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import ChatBubble from "../../src/components/ChatBubble";
 import { auth, db } from "../../src/services/firebase";
 import styles from "../../src/styles/chatbot";
@@ -30,10 +29,12 @@ type Message = {
   from: "user" | "bot";
 };
 
-type ComplaintAnalysis = {
-  isComplaint: boolean;
-  category?: string;
-  priority?: string;
+type AdvisorResponse = {
+  reply: string;
+  needsEscalation: boolean;
+  category: string;
+  priority: string;
+  summary: string;
 };
 
 /* =======================
@@ -41,7 +42,6 @@ type ComplaintAnalysis = {
 ======================= */
 
 export default function Chatbot() {
-  const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
   const uid = auth.currentUser?.uid;
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -83,35 +83,68 @@ CÓMO HABLAS:
 - Como una persona real y cercana, no como un bot corporativo. Nada de listas
   con viñetas ni asteriscos para respuestas cortas o emocionales — escribe en
   párrafos cortos, como si le escribieras a alguien por WhatsApp.
-- Si el usuario suena frustrado, ansioso o estresado (mayúsculas, urgencia,
-  quejas, "necesito ya", etc.), arranca reconociendo cómo se siente en una
-  frase breve y genuina antes de resolver algo. No minimices su molestia ni
-  uses frases hechas tipo "entiendo tu frustración" repetidas como fórmula.
+- Si el usuario suena frustrado, ansioso o estresado, arranca reconociendo
+  cómo se siente en una frase breve y genuina antes de resolver algo.
 - Tuteo, español neutro, cálido pero profesional. Cero tecnicismos innecesarios.
 
 Datos reales de la cuenta que estás atendiendo:
 - Plan actual: ${plan}
 - Consumo de datos: ${dataUsage}
 
-QUÉ HACER CUANDO NO TIENES UN DATO (ej. saldo exacto, un cobro puntual, historial
-de pagos — cosas que no están en los "Datos reales" de arriba):
-- Sé honesto de inmediato, sin rodeos ni excusas largas.
-- En la MISMA respuesta, ofrece conectarlo con un asesor humano ahora mismo
-  (no lo mandes a "entra a la app" o "llama a soporte" como si fuera su problema
-  resolverlo solo). Algo como: "eso no lo tengo yo a la mano, pero te puedo
-  escalar esto ahora mismo con un asesor para que te lo confirme, ¿quieres?"
-- No inventes cifras ni des un balance/consumo que no esté en los datos reales.
+CÓMO DECIDIR SI ESCALAS A UN HUMANO:
+Siempre intenta ayudar primero con lo que sí sabes o puedes explicar. Solo marca
+needsEscalation=true cuando, después de tu intento, el caso de verdad requiere
+que un humano lo revise: un cobro indebido, un pago que no se refleja, un dato
+que no tienes (saldo exacto, historial de pagos, un cobro puntual), o cualquier
+reclamo formal sobre la cuenta. Si es solo una pregunta informativa que ya
+respondiste bien, needsEscalation=false.
 
-No des consejos financieros generales fuera del contexto de esta cuenta/plan.
+Cuando el usuario pida hacer un cambio real sobre su cuenta (cambiar de plan,
+activar un paquete de datos, disputar un cobro), NO lo mandes a resolverlo por
+su cuenta en la web o la app. Ofrece escalarlo con un asesor humano que
+gestione el cambio directamente, y marca needsEscalation=true con la
+category que corresponda.
+
+Cuando needsEscalation sea true, tu "reply" debe incluir ese intento de ayuda
+Y avisar que lo vas a escalar (ej: "esto no lo puedo confirmar yo directamente,
+pero ya te lo dejo escalado con un asesor para que te lo resuelva"). No inventes
+cifras ni des un balance/consumo que no esté en los datos reales.
+
+Cuando needsEscalation sea true, además genera un "summary": una frase corta y
+clara (maxima 12 palabras) que describa el problema real del cliente, basada en
+TODA la conversación hasta ahora, no solo el ultimo mensaje. Ejemplos: "Sin
+internet en plan Prepago Básico, quiere cambiar de plan", "Cobro duplicado en
+factura de agosto". Si needsEscalation es false, deja "summary" como string vacío.
+
+Responde ÚNICAMENTE con un JSON válido, sin texto adicional, con este formato:
+{
+  "reply": "tu respuesta al usuario, tal como se la mostrarías",
+  "needsEscalation": true o false,
+  "category": "facturacion" | "internet" | "senal" | "otro",
+  "priority": "baja" | "media" | "alta"
+  "summary": "resumen corto del problema, solo si needsEscalation es true"
+}
 `.trim();
   };
 
   /* =======================
-     GEMINI FUNCTIONS
+     GEMINI (respuesta + decisión de escalar en una sola llamada)
   ======================= */
 
-  const askGemini = async (message: string): Promise<string> => {
+  const askAdvisor = async (
+    message: string,
+    history: Message[],
+    retries = 2,
+  ): Promise<AdvisorResponse> => {
     try {
+      const contents = [
+        ...history.map((msg) => ({
+          role: msg.from === "user" ? "user" : "model",
+          parts: [{ text: msg.text }],
+        })),
+        { role: "user", parts: [{ text: message }] },
+      ];
+
       const response = await fetch(
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
         {
@@ -124,112 +157,59 @@ No des consejos financieros generales fuera del contexto de esta cuenta/plan.
             systemInstruction: {
               parts: [{ text: buildSystemInstruction() }],
             },
-            contents: [
-              {
-                role: "user",
-                parts: [{ text: message }],
-              },
-            ],
+            contents,
+            generationConfig: {
+              responseMimeType: "application/json",
+            },
           }),
         },
       );
 
       const data = await response.json();
 
-      console.log("🧠 Gemini raw response:", JSON.stringify(data, null, 2));
-
-      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-      if (!text) {
-        return "🤔 No entendí bien, ¿puedes repetirlo?";
+      // Si el modelo está saturado, reintenta un par de veces con backoff corto
+      if (data?.error?.status === "UNAVAILABLE" && retries > 0) {
+        console.log(
+          `⏳ Modelo saturado, reintentando... (${retries} restantes)`,
+        );
+        await new Promise((r) => setTimeout(r, 1000));
+        return askAdvisor(message, history, retries - 1);
       }
 
-      return text;
-    } catch (error) {
-      console.log("❌ Error Gemini:", error);
-      return "Ups 😕 hubo un error hablando con el servidor";
-    }
-  };
-
-  const detectComplaint = async (
-    message: string,
-  ): Promise<ComplaintAnalysis> => {
-    try {
-      const response = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-goog-api-key": process.env.EXPO_PUBLIC_GEMINI_API_KEY!,
-          },
-          body: JSON.stringify({
-            contents: [
-              {
-                role: "user",
-                parts: [
-                  {
-                    text: `
-Eres un CLASIFICADOR AUTOMÁTICO para un asesor financiero de telefonía.
-No eres un asistente.
-No ayudas.
-No explicas.
-No aconsejas.
-No saludas.
-
-Tu respuesta DEBE ser ÚNICAMENTE un JSON válido.
-Si escribes texto adicional, la respuesta es incorrecta.
-
-Marca isComplaint=true si el usuario reporta un problema, un cobro indebido,
-un pago que no se refleja, un reclamo sobre su factura/plan, o cualquier cosa
-que un humano deba revisar. Si solo está preguntando algo informativo sobre
-su cuenta (cuánto plan tiene, cuánto consumo lleva), isComplaint=false.
-
-Responde EXACTAMENTE con este formato:
-
-{
-  "isComplaint": true o false,
-  "category": "facturacion" | "internet" | "senal" | "otro",
-  "priority": "baja" | "media" | "alta"
-}
-
-Mensaje del usuario:
-"${message}"
-
-                  `.trim(),
-                  },
-                ],
-              },
-            ],
-          }),
-        },
-      );
-
-      const data = await response.json();
-
-      console.log("🧠 Gemini complaint raw:", JSON.stringify(data, null, 2));
+      if (data?.error) {
+        console.log("⚠️ Error de la API de Gemini:", data.error);
+        throw new Error(data.error.message);
+      }
 
       const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-
-      console.log("🧪 Texto recibido:", rawText);
-
-      // 🔥 Extraer el primer JSON aunque Gemini escriba una biblia
       const match = rawText.match(/\{[\s\S]*\}/);
-
       if (!match) {
+        console.log(
+          "⚠️ Respuesta completa de Gemini:",
+          JSON.stringify(data, null, 2),
+        );
         throw new Error("No se encontró JSON en la respuesta");
       }
 
       const parsed = JSON.parse(match[0]);
 
       return {
-        isComplaint: Boolean(parsed.isComplaint),
+        reply: parsed.reply ?? "🤔 No entendí bien, ¿puedes repetirlo?",
+        needsEscalation: Boolean(parsed.needsEscalation),
         category: parsed.category ?? "otro",
         priority: parsed.priority ?? "media",
+        summary: parsed.summary ?? "",
       };
     } catch (error) {
-      console.log("❌ detectComplaint falló:", error);
-      return { isComplaint: false };
+      console.log("❌ Error askAdvisor:", error);
+      return {
+        reply:
+          "Ups 😕 el asesor virtual está saturado en este momento, intenta de nuevo en unos segundos 🙏",
+        needsEscalation: false,
+        category: "otro",
+        priority: "media",
+        summary: "",
+      };
     }
   };
 
@@ -248,7 +228,7 @@ Mensaje del usuario:
       category,
       priority,
       status: "abierto",
-      handledBy: "bot", // el rol que generó el caso; un admin lo puede reasignar después
+      handledBy: "bot",
       createdAt: serverTimestamp(),
     });
   };
@@ -267,7 +247,6 @@ Mensaje del usuario:
 
     const userText = input;
 
-    // Mostrar mensaje del usuario
     setMessages((prev) => [
       ...prev,
       {
@@ -280,39 +259,27 @@ Mensaje del usuario:
     setInput("");
     setIsTyping(true);
 
-    // Mueve el scroll hacia abajo al enviar un mensaje
     setTimeout(() => {
       scrollRef.current?.scrollToEnd({ animated: true });
     }, 100);
 
-    const analysis = await detectComplaint(userText);
+    const result = await askAdvisor(userText, messages);
 
-    if (analysis.isComplaint) {
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: Date.now() + 1,
+        text: result.reply,
+        from: "bot",
+      },
+    ]);
+
+    if (result.needsEscalation) {
       await createCase(
-        userText,
-        analysis.category || "otro",
-        analysis.priority || "media",
+        result.summary || userText,
+        result.category,
+        result.priority,
       );
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          text: "📋 Esto ya lo escalé a un asesor humano — quedó registrado como caso y te van a contactar pronto para resolverlo directamente.",
-          from: "bot",
-        },
-      ]);
-    } else {
-      const reply = await askGemini(userText);
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          text: reply,
-          from: "bot",
-        },
-      ]);
     }
 
     setIsTyping(false);

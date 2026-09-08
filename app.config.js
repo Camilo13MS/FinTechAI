@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import "dotenv/config";
 
 export default ({ config }) => ({
   ...config,
@@ -47,6 +47,10 @@ export default ({ config }) => ({
         },
       },
     ],
+    "expo-font",
+    "expo-image",
+    "expo-status-bar",
+    "expo-web-browser",
   ],
 
   experiments: {

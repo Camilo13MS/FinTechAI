@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Animated, Easing, Image, StyleSheet, Text } from "react-native";
+import { Animated, Easing, StyleSheet } from "react-native";
 import colors from "../constants/colors";
 
 type Props = {
@@ -8,7 +8,12 @@ type Props = {
   onFinish: () => void;
 };
 
-const BAR_COLORS = [colors.primary, "#11A497", "#0FB4B0", colors.accent];
+const BAR_COLORS = [
+  colors.primary,
+  colors.secondary,
+  colors.tertiary,
+  colors.accent,
+];
 
 export default function WelcomeOverlay({ message, onFinish }: Props) {
   const overlayOpacity = useRef(new Animated.Value(0)).current;
@@ -45,8 +50,8 @@ export default function WelcomeOverlay({ message, onFinish }: Props) {
               duration: 260,
               easing: Easing.out(Easing.quad),
               useNativeDriver: true,
-            })
-          )
+            }),
+          ),
         ),
       ]),
       // 4. mini pausa para que se alcance a leer/ver antes de navegar
@@ -95,7 +100,7 @@ export default function WelcomeOverlay({ message, onFinish }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
@@ -108,7 +113,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   message: {
-    color: "#FFFFFF",
+    color: colors.surface,
     fontSize: 19,
     fontWeight: "700",
     marginBottom: 28,

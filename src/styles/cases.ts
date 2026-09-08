@@ -1,19 +1,20 @@
 import { StyleSheet } from "react-native";
+import colors from "../constants/colors";
 
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.background,
     padding: 16,
   },
   title: {
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 16,
-    color: "#111827",
+    color: colors.textDark,
   },
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -24,7 +25,7 @@ export default StyleSheet.create({
   },
   message: {
     fontSize: 14,
-    color: "#374151",
+    color: colors.textBody,
     marginBottom: 8,
   },
   metaRow: {
@@ -38,12 +39,12 @@ export default StyleSheet.create({
     borderRadius: 999,
   },
   badgeText: {
-    color: "#fff",
+    color: colors.surface,
     fontSize: 12,
     fontWeight: "bold",
   },
   status: {
     fontSize: 12,
-    color: "#6B7280",
+    color: colors.textSecondary,
   },
 });

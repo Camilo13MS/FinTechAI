@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Redirect, Tabs } from "expo-router";
+import colors from "../../src/constants/colors";
 import { useAuth } from "../../src/hooks/useAuth";
 
 export default function TabsLayout() {
@@ -13,13 +14,19 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: "#0D9488",
-        tabBarInactiveTintColor: "#9CA3AF",
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: {
-          backgroundColor: "#FFFFFF",
-          height: 65,
-          paddingBottom: 8,
-          paddingTop: 8,
+          backgroundColor: colors.surface,
+          height: 70,
+          paddingBottom: 10,
+          paddingTop: 6,
+          borderTopWidth: 1,
+          borderTopColor: colors.border,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          marginTop: 2,
         },
         tabBarIcon: ({ color, size }) => {
           let iconName: any;
